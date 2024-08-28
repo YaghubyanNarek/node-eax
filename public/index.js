@@ -21,7 +21,7 @@ function render() {
 }
 
 get.addEventListener("click", () => {
-    fetch("http://localhost:3000/products")
+    fetch("http://localhost:3015/products")
     .then((response) => {
         if (!response.ok) {
             throw new Error("The network is not okay");
@@ -43,7 +43,7 @@ get.addEventListener("click", () => {
 click.addEventListener("click", () => {
     data.name = names.value;
     data.price = price.value;
-    fetch("http://localhost:3000/addProduct", {
+    fetch("http://localhost:3015/addProduct", {
         method: "POST",
         headers: { 
             "Content-Type": "application/json"  
