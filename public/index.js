@@ -14,12 +14,13 @@ get.addEventListener("click", () => {
         if(!response.ok) {
             throw new Error("the network is not okay");
         } else {
-            JSON.stringify(response);
+            return response.json();
         }
     }).then((data) => {
-        getInfo.copyWithin(data);
+        data.forEach(element => {
+            getInfo.push(element);
+        });
         console.log(getInfo);
-        console.log(data);
     }).catch((e) => {
         console.log(e);
     })
@@ -38,6 +39,8 @@ click.addEventListener("click", () => {
     .then((response) => {
         if(!response.ok) {
             throw new Error("netword issue");
+        } else {
+            return response.text();
         }
     })
     .then((data) => {
