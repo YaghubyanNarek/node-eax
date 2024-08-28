@@ -14,10 +14,10 @@ async function startServer() {
 
         await mongoClient.connect();
 
-        const database = mongoClient.db("products");
+        const database = mongoClient.db("narekdb");
         const myCollections = database.collection("products");
 
-        app.post("/test", async (req, res) => {
+        app.post("/addProduct", async (req, res) => {
             try {
                 console.log("Request body:", req.body);
                 const result = await myCollections.insertOne(req.body);
@@ -29,7 +29,7 @@ async function startServer() {
             }
         });
 
-        app.get("/getInfo", async (req, res) => {
+        app.get("/products", async (req, res) => {
             const resBody = await myCollections.find().toArray();
             console.log(resBody);
             res.status(200).send(resBody);
