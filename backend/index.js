@@ -1,17 +1,23 @@
-import express, { application } from "express";
+import express from "express";
 import { MongoClient } from "mongodb";
 import cors from "cors";
-import bodyParser from "body-parser"
+import bodyParser from "body-parser";
+import path from "path";
+import { fileURLToPath } from 'url';
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended : false }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
 
+// Manually set __dirname in ES6 modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 async function startServer() {
     try {
-        const mongoClient = new MongoClient("mongodb://127.0.0.1:27017");
+        const mongoClient = new MongoClient("mongodb://localhost:27017");
 
         await mongoClient.connect();
 
@@ -34,10 +40,14 @@ async function startServer() {
             const resBody = await myCollections.find().toArray();
             console.log(resBody);
             res.status(200).send(resBody);
-        })
+        });
+
+        app.get("/", (req, res) => {
+            res.sendFile(path.join(__dirname,  "../public", "index.html"));
+        });
 
         app.listen(3015, () => {
-            console.log("Server is running on port 3000");
+            console.log("Server is running on port 3015");
         });
     } catch (error) {
         console.error("Error connecting to MongoDB:", error);
