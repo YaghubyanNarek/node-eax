@@ -1,35 +1,49 @@
-let data = {
-    name:"hello",
-    price : 15,
-}
-
 const getInfo = [];
 
 const click = document.querySelector(".click");
 const get = document.querySelector(".get");
+const names = document.querySelector(".name");
+const price = document.querySelector(".price");
+const main_div = document.querySelector(".main_div");
+let data = {
+    name: names.value,
+    price: price.value,
+};
+
+function render() {
+    main_div.innerHTML = '';
+    
+    getInfo.forEach(item => {
+        const elem = document.createElement("h1");
+        elem.textContent = `Name: ${item.name}, Price: ${item.price}`;
+        main_div.appendChild(elem);
+    });
+}
 
 get.addEventListener("click", () => {
-    fetch("http://localhost:3000/getInfo")
+    fetch("http://localhost:3000/products")
     .then((response) => {
-        if(!response.ok) {
-            throw new Error("the network is not okay");
-        } else {
-            return response.json();
+        if (!response.ok) {
+            throw new Error("The network is not okay");
         }
-    }).then((data) => {
+        return response.json();
+    })
+    .then((data) => {
+        getInfo.length = 0;
         data.forEach(element => {
             getInfo.push(element);
         });
-        console.log(getInfo);
-    }).catch((e) => {
-        console.log(e);
+        render(); 
     })
-})
-
-
+    .catch((e) => {
+        console.log(e);
+    });
+});
 
 click.addEventListener("click", () => {
-    fetch("http://localhost:3000/test", {
+    data.name = names.value;
+    data.price = price.value;
+    fetch("http://localhost:3000/addProduct", {
         method: "POST",
         headers: { 
             "Content-Type": "application/json"  
@@ -37,16 +51,15 @@ click.addEventListener("click", () => {
         body: JSON.stringify(data)
     })
     .then((response) => {
-        if(!response.ok) {
-            throw new Error("netword issue");
-        } else {
-            return response.text();
+        if (!response.ok) {
+            throw new Error("Network issue");
         }
+        return response.text();
     })
     .then((data) => {
         console.log(data);
     })
     .catch((e) => {
         console.log(e);
-    })
-}) 
+    });
+});
