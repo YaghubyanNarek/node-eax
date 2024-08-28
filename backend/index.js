@@ -35,7 +35,7 @@ async function startServer() {
             res.status(200).send(resBody);
         })
 
-        app.listen(3000, () => {
+        app.listen(3015, () => {
             console.log("Server is running on port 3000");
         });
     } catch (error) {
