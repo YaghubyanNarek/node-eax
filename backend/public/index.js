@@ -25,7 +25,7 @@ function render() {
         imgElem.classList.add("card-img-top");
         imgElem.style.width = "200px";
         imgElem.style.height = "200px";
-        imgElem.style.objectFit = "cover"; // This ensures the image fits within the 200x200 area
+        imgElem.style.objectFit = "cover"; 
         card.appendChild(imgElem);
 
         const cardBody = document.createElement("div");

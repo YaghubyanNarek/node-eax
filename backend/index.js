@@ -20,7 +20,7 @@ console.log(path.join(__dirname, "public"));
 
 async function startServer() {
     try {
-        const mongoClient = new MongoClient("mongodb://localhost:27017");
+        const mongoClient = new MongoClient("mongodb://127.0.0.1:27017");
 
         await mongoClient.connect();
 
