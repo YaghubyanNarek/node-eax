@@ -9,11 +9,14 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(express.static("public"));
 
-// Manually set __dirname in ES6 modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+app.use(express.static("public"));
+
+console.log(path.join(__dirname, "public"));
+
 
 async function startServer() {
     try {
@@ -38,12 +41,11 @@ async function startServer() {
 
         app.get("/products", async (req, res) => {
             const resBody = await myCollections.find().toArray();
-            console.log(resBody);
             res.status(200).send(resBody);
         });
 
         app.get("/", (req, res) => {
-            res.sendFile(path.join(__dirname,  "../public", "index.html"));
+            res.sendFile(path.join(__dirname,  "/public", "index.html"));
         });
 
         app.listen(3015, () => {
