@@ -1,9 +1,11 @@
 import express from "express";
-import { MongoClient } from "mongodb";
+import { MongoClient, GridFSBucket } from "mongodb";
 import cors from "cors";
 import bodyParser from "body-parser";
 import path from "path";
 import { fileURLToPath } from 'url';
+import multer from "multer";
+import { Readable } from "stream";
 
 const app = express();
 app.use(cors());
@@ -15,29 +17,34 @@ const __dirname = path.dirname(__filename);
 
 app.use(express.static("public"));
 
-console.log(path.join(__dirname, "public"));
-
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 async function startServer() {
     try {
         const mongoClient = new MongoClient("mongodb://127.0.0.1:27017");
-
         await mongoClient.connect();
 
         const database = mongoClient.db("narekdb");
         const myCollections = database.collection("products");
 
-        app.post("/addProduct", async (req, res) => {
-            try {
-                console.log("Request body:", req.body);
-                const result = await myCollections.insertOne(req.body);
-                console.log(result);
-                res.status(200).send("Data received and stored");
-            } catch (error) {
-                console.error("Error inserting data:", error);
-                res.status(500).send("Internal Server Error");
-            }
+        const bucket = new GridFSBucket(database, {
+            bucketName: "images"
         });
+
+        app.post("/addProduct", upload.single("image"), async (req, res) => {
+            const { title, price, desc, category } = req.body;
+            const base64Image = req.file.buffer.toString('base64');
+            const image = `data:${req.file.mimetype};base64,${base64Image}`;
+            await myCollections.insertOne({
+                title,
+                price,
+                desc,
+                category,
+                image
+            });
+            
+        }); 
 
         app.get("/products", async (req, res) => {
             const resBody = await myCollections.find().toArray();
@@ -45,7 +52,7 @@ async function startServer() {
         });
 
         app.get("/", (req, res) => {
-            res.sendFile(path.join(__dirname,  "/public", "index.html"));
+            res.sendFile(path.join(__dirname, "/public", "index.html"));
         });
 
         app.listen(3015, () => {
